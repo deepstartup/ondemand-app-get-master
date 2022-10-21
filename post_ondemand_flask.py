@@ -33,7 +33,7 @@ def createService():
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
 @app.route("/service/paymentDetails",  methods = ['POST'])
-def createService():
+def paymentDetails():
     json_text=request.get_json()
     payment_id=json_text['payment_id']
     payment_type=json_text['payment_type']
