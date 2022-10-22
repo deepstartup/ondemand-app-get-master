@@ -60,5 +60,27 @@ def paymentDetails():
         return json.dumps(data,indent=4, sort_keys=True, default=str), 200, {'ContentType':'application/json'}    
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
+@app.route("/service/serviceProvider",  methods = ['POST'])
+def serviceProvider():
+    json_text=request.get_json()
+    service_provider_id=json_text['service_provider_id']
+    service_provider_type=json_text['service_provider_type']
+    service_provider_location_id=json_text['service_provider_location_id']
+    service_provider_creation_date=json_text['service_provider_creation_date']
+    service_provider_activation_flag=json_text['service_provider_activation_flag']
+    service_id=json_text['service_id']
+    service_provider_document_id=json_text['service_provider_document_id']
+    service_charge=json_text['service_charge']
+    params_all=config()
+    main_conn=connect(params_all)
+    postgres_insert_query = """ INSERT INTO kvx_db_prod.kvx_service_provider(service_provider_id, service_provider_type, service_provider_location_id, service_provider_creation_date, service_provider_activation_flag, service_id, service_provider_document_id, service_charge) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
+    record_to_insert = (service_provider_id, service_provider_type, service_provider_location_id, service_provider_creation_date, service_provider_activation_flag, service_id, service_provider_document_id, service_charge)
+    try:
+        main_conn.do_insert(postgres_insert_query,record_to_insert)
+    except Exception as e:
+        data:dict={'Error in DB:':e}
+        return json.dumps(data,indent=4, sort_keys=True, default=str), 200, {'ContentType':'application/json'}    
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
