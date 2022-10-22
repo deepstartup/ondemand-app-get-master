@@ -117,5 +117,51 @@ def customerMaster():
         return json.dumps(data,indent=4, sort_keys=True, default=str), 200, {'ContentType':'application/json'}    
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
+@app.route("/service/orderDetails",  methods = ['POST'])
+def orderDetails(): 
+    json_text=request.get_json()
+    order_id=json_text['order_id']
+    cust_id=json_text['cust_id']
+    service_id=json_text['service_id']
+    service_provider_id=json_text['service_provider_id']
+    order_date=json_text['order_date']
+    order_status=json_text['order_status']
+    order_type=json_text['order_type']
+    order_qty=json_text['order_qty']
+    payment_id=json_text['payment_id']
+    favourite_details=json_text['favourite_details']
+    
+    params_all=config()
+    main_conn=connect(params_all)
+    postgres_insert_query = """ INSERT INTO kvx_db_prod.kvx_order_details (order_id, cust_id, service_id, service_provider_id, order_date, order_status, order_type, order_qty, payment_id, favourite_details) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+    record_to_insert = (order_id, cust_id, service_id, service_provider_id, order_date, order_status, order_type, order_qty, payment_id, favourite_details)
+    try:
+        main_conn.do_insert(postgres_insert_query,record_to_insert)
+    except Exception as e:
+        data:dict={'Error in DB:':e}
+        return json.dumps(data,indent=4, sort_keys=True, default=str), 200, {'ContentType':'application/json'}    
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
+@app.route("/service/customerReview",  methods = ['POST'])
+def customerReview(): 
+    json_text=request.get_json()
+    order_id=json_text['order_id']
+    rating=json_text['rating']
+    reviewer_name=json_text['reviewer_name']
+    reviewer_type=json_text['reviewer_type']
+    review_timestamp=json_text['review_timestamp']
+    review_comments=json_text['review_comments']
+    
+    params_all=config()
+    main_conn=connect(params_all)
+    postgres_insert_query = """ INSERT INTO kvx_db_prod.kvx_customer_review (order_id, rating, reviewer_name, reviewer_type, review_timestamp, review_comments) VALUES (%s,%s,%s,%s,%s,%s)"""
+    record_to_insert = (order_id, rating, reviewer_name, reviewer_type, review_timestamp, review_comments)
+    try:
+        main_conn.do_insert(postgres_insert_query,record_to_insert)
+    except Exception as e:
+        data:dict={'Error in DB:':e}
+        return json.dumps(data,indent=4, sort_keys=True, default=str), 200, {'ContentType':'application/json'}    
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
