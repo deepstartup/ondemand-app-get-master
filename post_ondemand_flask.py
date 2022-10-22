@@ -82,5 +82,40 @@ def serviceProvider():
         return json.dumps(data,indent=4, sort_keys=True, default=str), 200, {'ContentType':'application/json'}    
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
+@app.route("/service/customerMaster",  methods = ['POST'])
+def customerMaster(): 
+    json_text=request.get_json()
+    cust_id=json_text['cust_id']
+    cust_first_name=json_text['cust_first_name']
+    cust_last_name=json_text['cust_last_name']
+    cust_gender=json_text['cust_gender']
+    cust_dob=json_text['cust_dob']
+    cust_primary_contact_type=json_text['cust_primary_contact_type']
+    cust_primary_mobile_no=json_text['cust_primary_mobile_no']
+    cust_secondary_mobile_no=json_text['cust_secondary_mobile_no']
+    cust_primary_email_id=json_text['cust_primary_email_id']
+    cust_secondary_email_id=json_text['cust_secondary_email_id']
+    cust_location_type=json_text['cust_location_type']
+    cust_location_lat=json_text['cust_location_lat']
+    cust_location_long=json_text['cust_location_long']
+    cust_location_street_add1=json_text['cust_location_street_add1']
+    cust_location_street_add2=json_text['cust_location_street_add2']
+    cust_location_city=json_text['cust_location_city']
+    cust_location_state=json_text['cust_location_state']
+    cust_location_country=json_text['cust_location_country']
+    cust_location_zip_code=json_text['cust_location_zip_code']
+    cust_activation_flag=json_text['cust_activation_flag']
+    
+    params_all=config()
+    main_conn=connect(params_all)
+    postgres_insert_query = """ INSERT INTO kvx_db_prod.kvx_customer_master (cust_id, cust_first_name, cust_last_name, cust_gender, cust_dob, cust_primary_contact_type, cust_primary_mobile_no, cust_secondary_mobile_no, cust_primary_email_id, cust_secondary_email_id, cust_location_type, cust_location_lat, cust_location_long, cust_location_street_add1, cust_location_street_add2, cust_location_city, cust_location_state, cust_location_country, cust_location_zip_code, cust_activation_flag) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+    record_to_insert = (cust_id, cust_first_name, cust_last_name, cust_gender, cust_dob, cust_primary_contact_type, cust_primary_mobile_no, cust_secondary_mobile_no, cust_primary_email_id, cust_secondary_email_id, cust_location_type, cust_location_lat, cust_location_long, cust_location_street_add1, cust_location_street_add2, cust_location_city, cust_location_state, cust_location_country, cust_location_zip_code, cust_activation_flag)
+    try:
+        main_conn.do_insert(postgres_insert_query,record_to_insert)
+    except Exception as e:
+        data:dict={'Error in DB:':e}
+        return json.dumps(data,indent=4, sort_keys=True, default=str), 200, {'ContentType':'application/json'}    
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
