@@ -190,5 +190,36 @@ def serviceProviderEnterprise():
         return json.dumps(data,indent=4, sort_keys=True, default=str), 200, {'ContentType':'application/json'}    
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
+@app.route("/service/serviceProviderIndividual",  methods = ['POST'])
+def serviceProviderIndividual(): 
+    json_text=request.get_json()
+    sp_individual_id=json_text['sp_individual_id']
+    sp_enterprise_id=json_text['sp_enterprise_id']
+    sp_service_provider_id=json_text['sp_service_provider_id']
+    sp_first_name=json_text['sp_first_name']
+    sp_last_name=json_text['sp_last_name']
+    sp_gender=json_text['sp_gender']
+    sp_dob=json_text['sp_dob']
+    sp_primary_contact_type=json_text['sp_primary_contact_type']
+    sp_primary_mobile_no=json_text['sp_primary_mobile_no']
+    sp_secondary_mobile_no=json_text['sp_secondary_mobile_no']
+    sp_primary_email_id=json_text['sp_primary_email_id']
+    sp_secondary_email_id=json_text['sp_secondary_email_id']
+    sp_primary_id_type=json_text['sp_primary_id_type']
+    sp_primary_id_number=json_text['sp_primary_id_number']
+    sp_secondary_id_type=json_text['sp_secondary_id_type']
+    sp_secondary_id_number=json_text['sp_secondary_id_number']
+    activation_flag=json_text['activation_flag']
+    params_all=config()
+    main_conn=connect(params_all)
+    postgres_insert_query = """INSERT INTO kvx_db_prod.kvx_sp_individual (sp_individual_id, sp_enterprise_id, sp_service_provider_id, sp_first_name, sp_last_name, sp_gender, sp_dob, sp_primary_contact_type, sp_primary_mobile_no, sp_secondary_mobile_no, sp_primary_email_id, sp_secondary_email_id, sp_primary_id_type, sp_primary_id_number, sp_secondary_id_type, sp_secondary_id_number, activation_flag) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+    record_to_insert = (sp_individual_id, sp_enterprise_id, sp_service_provider_id, sp_first_name, sp_last_name, sp_gender, sp_dob, sp_primary_contact_type, sp_primary_mobile_no, sp_secondary_mobile_no, sp_primary_email_id, sp_secondary_email_id, sp_primary_id_type, sp_primary_id_number, sp_secondary_id_type, sp_secondary_id_number, activation_flag)
+    try:
+        main_conn.do_insert(postgres_insert_query,record_to_insert)
+    except Exception as e:
+        data:dict={'Error in DB:':e}
+        return json.dumps(data,indent=4, sort_keys=True, default=str), 200, {'ContentType':'application/json'}    
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
