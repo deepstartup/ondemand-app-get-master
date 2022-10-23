@@ -221,5 +221,32 @@ def serviceProviderIndividual():
         return json.dumps(data,indent=4, sort_keys=True, default=str), 200, {'ContentType':'application/json'}    
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
+@app.route("/service/serviceProviderLocation",  methods = ['POST'])
+def serviceProviderLocation(): 
+    json_text=request.get_json()
+    sp_location_id=json_text['sp_location_id']
+    service_provider_id=json_text['service_provider_id']
+    sp_location_type=json_text['sp_location_type']
+    sp_location_lat=json_text['sp_location_lat']
+    sp_location_long=json_text['sp_location_long']
+    sp_location_street_add1=json_text['sp_location_street_add1']
+    sp_location_street_add2=json_text['sp_location_street_add2']
+    sp_location_city=json_text['sp_location_city']
+    sp_location_state=json_text['sp_location_state']
+    sp_location_country=json_text['sp_location_country']
+    sp_location_zip_code=json_text['sp_location_zip_code']
+    sp_location_creation_date=json_text['sp_location_creation_date']
+    sp_location_indicator=json_text['sp_location_indicator']
+    params_all=config()
+    main_conn=connect(params_all)
+    postgres_insert_query = """INSERT INTO kvx_db_prod.kvx_sp_location (sp_location_id, service_provider_id, sp_location_type, sp_location_lat, sp_location_long, sp_location_street_add1, sp_location_street_add2, sp_location_city, sp_location_state, sp_location_country, sp_location_zip_code, sp_location_creation_date, sp_location_indicator) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+    record_to_insert = (sp_location_id, service_provider_id, sp_location_type, sp_location_lat, sp_location_long, sp_location_street_add1, sp_location_street_add2, sp_location_city, sp_location_state, sp_location_country, sp_location_zip_code, sp_location_creation_date, sp_location_indicator)
+    try:
+        main_conn.do_insert(postgres_insert_query,record_to_insert)
+    except Exception as e:
+        data:dict={'Error in DB:':e}
+        return json.dumps(data,indent=4, sort_keys=True, default=str), 200, {'ContentType':'application/json'}    
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
