@@ -163,5 +163,32 @@ def customerReview():
         return json.dumps(data,indent=4, sort_keys=True, default=str), 200, {'ContentType':'application/json'}    
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
+@app.route("/service/serviceProviderEnterprise",  methods = ['POST'])
+def serviceProviderEnterprise(): 
+    json_text=request.get_json()
+    
+    sp_enterprice_id=json_text['sp_enterprice_id']
+    sp_enterprice_name=json_text['sp_enterprice_name']
+    sp_enterprice_owner=json_text['sp_enterprice_owner']
+    sp_service_provider_id=json_text['sp_service_provider_id']
+    sp_primary_contact_type=json_text['sp_primary_contact_type']
+    sp_primary_mobile_no=json_text['sp_primary_mobile_no']
+    sp_secondary_mobile_no=json_text['sp_secondary_mobile_no']
+    sp_primary_email_id=json_text['sp_primary_email_id']
+    sp_secondary_email_id=json_text['sp_secondary_email_id']
+    sp_id_type=json_text['sp_id_type']
+    sp_id_number=json_text['sp_id_number']
+    activation_flag=json_text['activation_flag']
+    params_all=config()
+    main_conn=connect(params_all)
+    postgres_insert_query = """INSERT INTO kvx_db_prod.kvx_sp_enterprise (sp_enterprice_id, sp_enterprice_name, sp_enterprice_owner, sp_service_provider_id, sp_primary_contact_type, sp_primary_mobile_no, sp_secondary_mobile_no, sp_primary_email_id, sp_secondary_email_id, sp_id_type, sp_id_number, activation_flag) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"""
+    record_to_insert = (sp_enterprice_id, sp_enterprice_name, sp_enterprice_owner, sp_service_provider_id, sp_primary_contact_type, sp_primary_mobile_no, sp_secondary_mobile_no, sp_primary_email_id, sp_secondary_email_id, sp_id_type, sp_id_number, activation_flag)
+    try:
+        main_conn.do_insert(postgres_insert_query,record_to_insert)
+    except Exception as e:
+        data:dict={'Error in DB:':e}
+        return json.dumps(data,indent=4, sort_keys=True, default=str), 200, {'ContentType':'application/json'}    
+    return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
